@@ -1,9 +1,9 @@
 {
   "plugins": [
     {
-      "name": "workflow-agent-helpers",
-      "path": "plugins/workflow-agent-helpers",
-      "description": "Cross-cutting workflow helper skills for agent selection, handoffs, and Beads task shaping."
+      "name": "skill-harness-helpers",
+      "path": "plugins/skill-harness-helpers",
+      "description": "Cross-cutting helper skills for skill-harness agent selection, handoffs, and Beads task shaping."
     }
   ]
 }

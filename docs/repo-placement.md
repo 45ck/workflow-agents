@@ -4,7 +4,7 @@ The right model is not full duplication everywhere.
 
 ## Recommendation
 
-- Keep `workflow-agents` as the canonical source of truth for workflow agents.
+- Keep `skill-harness` as the canonical source of truth for shared workflow agents and install tooling.
 - Keep the skill-pack repos as the canonical source of truth for reusable skills.
 - Do not copy the full 13-agent roster into every individual pack repo.
 
@@ -12,7 +12,7 @@ The right model is not full duplication everywhere.
 
 - The agents are cross-pack compositions, so most of them do not belong cleanly to a single pack repo.
 - Duplicating full agent definitions across pack repos creates version drift, especially once loadouts change.
-- A central agent repo makes dependency management, install flows, and harness-specific formats easier to maintain.
+- A central harness repo makes dependency management, install flows, and harness-specific formats easier to maintain.
 
 ## What to allow in individual pack repos
 
@@ -22,10 +22,10 @@ The right model is not full duplication everywhere.
 
 ## Practical rule
 
-- Shared multi-pack workflow agents: keep in `workflow-agents`.
+- Shared multi-pack workflow agents: keep in `skill-harness`.
 - Pack-specific helper agents: allow in the individual repo if they only depend on that repo or that repo plus one tightly related pack.
-- If an agent starts depending on three or more packs, move it to `workflow-agents`.
+- If an agent starts depending on three or more packs, move it to `skill-harness`.
 
 ## Current decision
 
-For the current roster, `workflow-agents` should remain the main home. Individual pack repos should link to it rather than duplicate it.
+For the current roster, `skill-harness` should remain the main home. Individual pack repos should link to it rather than duplicate it.

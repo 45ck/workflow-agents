@@ -1,6 +1,6 @@
 # Agent Loadouts
 
-This document maps each workflow agent to its curated skill set.
+This document maps each shared `skill-harness` agent to its curated skill set.
 
 ## requirements-analyst
 

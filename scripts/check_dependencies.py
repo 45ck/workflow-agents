@@ -1,3 +1,4 @@
+import argparse
 from pathlib import Path
 import json
 import sys
@@ -9,8 +10,19 @@ AGENTS_ROOT = Path.home() / ".agents" / "skills"
 CLAUDE_ROOT = Path.home() / ".claude" / "skills"
 
 
+def parse_args(argv):
+    parser = argparse.ArgumentParser()
+    parser.add_argument("agents", nargs="*", help="Backward-compatible agent names.")
+    parser.add_argument("--agent", action="append", dest="agent_flags", default=[], help="Agent to verify.")
+    parser.add_argument("--all", action="store_true", help="Check every configured agent.")
+    return parser.parse_args(argv[1:])
+
+
 def main(argv):
-    names = argv[1:] or sorted(LOADOUTS.keys())
+    args = parse_args(argv)
+    names = list(dict.fromkeys(args.agents + args.agent_flags))
+    if args.all or not names:
+        names = sorted(LOADOUTS.keys())
     missing = []
     for agent in names:
         skills = LOADOUTS.get(agent, {}).get("skills")

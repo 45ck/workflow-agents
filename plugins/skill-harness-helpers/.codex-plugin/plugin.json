@@ -1,5 +1,5 @@
 {
-  "name": "workflow-agent-helpers",
+  "name": "skill-harness-helpers",
   "version": "1.0.0",
   "description": "Cross-cutting workflow helper skills for agent selection, handoffs, and Beads task shaping.",
   "skills": "./skills/"

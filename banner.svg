@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
-  <title>workflow-agents banner</title>
-  <desc>Workflow agents banner.</desc>
+  <title>skill-harness banner</title>
+  <desc>Skill harness banner.</desc>
   <defs><linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop offset="0%" stop-color="#0f172a" /><stop offset="50%" stop-color="#1d4ed8" /><stop offset="100%" stop-color="#60a5fa" /></linearGradient></defs>
   <rect width="1200" height="360" rx="36" fill="url(#bg)" />
   <circle cx="140" cy="120" r="26" fill="#ffffff" />
@@ -8,6 +8,6 @@
   <circle cx="330" cy="180" r="30" fill="#ffffff" opacity="0.96" />
   <path d="M168 120h86a38 38 0 0 1 38 38v0a38 38 0 0 0 38 38" fill="none" stroke="#fff" stroke-width="14" stroke-linecap="round" />
   <path d="M168 240h62a38 38 0 0 0 38-38v0a38 38 0 0 1 38-38h24" fill="none" stroke="#bfdbfe" stroke-width="14" stroke-linecap="round" />
-  <text x="420" y="150" fill="#fff" font-family="Segoe UI, Arial, sans-serif" font-size="56" font-weight="700">workflow-agents</text>
-  <text x="420" y="210" fill="#dbeafe" font-family="Segoe UI, Arial, sans-serif" font-size="24">Role-based Claude and Codex agents built from curated skill-pack loadouts</text>
+  <text x="420" y="150" fill="#fff" font-family="Segoe UI, Arial, sans-serif" font-size="56" font-weight="700">skill-harness</text>
+  <text x="420" y="210" fill="#dbeafe" font-family="Segoe UI, Arial, sans-serif" font-size="24">Umbrella installer for skill packs plus shared Claude and Codex agents</text>
 </svg>
