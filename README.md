@@ -6,11 +6,12 @@
 
 `skill-harness` is the setup repo for the 45ck agent workflow stack.
 
-It does three jobs:
+It does four jobs:
 
 - installs the shared skill-pack suite
 - installs the shared Claude and Codex agents
 - bootstraps project-level tooling with `@45ck/noslop` and `45ck/agent-docs`
+- optionally bootstraps Beads, enabled by default in project setup
 
 ## What it can set up
 
@@ -25,6 +26,7 @@ It does three jobs:
 
 - `@45ck/noslop`
 - `45ck/agent-docs`
+- `bd` / Beads
 
 Use the project setup command when you want a repo scaffolded with the 45ck tooling stack:
 
@@ -36,8 +38,10 @@ That command:
 
 - creates a `package.json` if the target repo does not have one yet
 - installs `@45ck/noslop` and `45ck/agent-docs`
+- installs the Beads CLI if it is not already present
 - runs `agent-docs init`
 - runs `noslop init`
+- runs `bd init`
 - runs `agent-docs install-gates --quality`
 
 ## Install the CLI
@@ -121,6 +125,7 @@ Skip one tool:
 ```bash
 ./skill-harness setup-project --dir ../my-project --skip-agent-docs
 ./skill-harness setup-project --dir ../my-project --skip-noslop
+./skill-harness setup-project --dir ../my-project --skip-beads
 ```
 
 ### Validate installed agent dependencies

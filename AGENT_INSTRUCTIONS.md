@@ -7,7 +7,7 @@ Use this file when another agent needs to install or use `skill-harness` correct
 `skill-harness` is both:
 
 - the installer for the shared 45ck skill-pack and agent suite
-- the setup repo for project-level tooling based on `@45ck/noslop` and `45ck/agent-docs`
+- the setup repo for project-level tooling based on `@45ck/noslop`, `45ck/agent-docs`, and optional Beads integration
 
 ## Shared suite install
 
@@ -46,8 +46,10 @@ Default behavior:
 - create `package.json` if missing
 - install `@45ck/noslop`
 - install `45ck/agent-docs`
+- install the Beads CLI by default if it is not already available
 - run `agent-docs init`
 - run `noslop init`
+- run `bd init`
 - run `agent-docs install-gates --quality`
 
 Useful variants:
@@ -56,6 +58,7 @@ Useful variants:
 ./skill-harness setup-project --dir path/to/project --install-only
 ./skill-harness setup-project --dir path/to/project --skip-agent-docs
 ./skill-harness setup-project --dir path/to/project --skip-noslop
+./skill-harness setup-project --dir path/to/project --skip-beads
 ```
 
 ## Rules

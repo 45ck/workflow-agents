@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"sort"
 	"strconv"
 	"strings"
@@ -37,6 +38,13 @@ type selection struct {
 	Agent []string
 	Repo  []string
 }
+
+type beadsInstallMode string
+
+const (
+	beadsDisabled beadsInstallMode = "disabled"
+	beadsSystem   beadsInstallMode = "system"
+)
 
 func main() {
 	root, err := findRepoRoot()
@@ -146,6 +154,7 @@ func runSetupProject(args []string) {
 	targetDir := fs.String("dir", ".", "Target project directory.")
 	skipNoslop := fs.Bool("skip-noslop", false, "Do not install @45ck/noslop.")
 	skipAgentDocs := fs.Bool("skip-agent-docs", false, "Do not install 45ck/agent-docs.")
+	skipBeads := fs.Bool("skip-beads", false, "Do not install or initialize Beads.")
 	installOnly := fs.Bool("install-only", false, "Install packages only; skip initialization commands.")
 	fs.Parse(args)
 
@@ -171,6 +180,13 @@ func runSetupProject(args []string) {
 		exitOnErr(runCommand(projectDir, "npm", args...))
 	}
 
+	beadsMode := beadsDisabled
+	if !*skipBeads {
+		mode, err := installBeads(projectDir)
+		exitOnErr(err)
+		beadsMode = mode
+	}
+
 	if *installOnly {
 		fmt.Printf("Installed project tooling in %s\n", projectDir)
 		return
@@ -181,6 +197,9 @@ func runSetupProject(args []string) {
 	}
 	if !*skipNoslop {
 		exitOnErr(runCommand(projectDir, "npx", "noslop", "init"))
+	}
+	if beadsMode != beadsDisabled {
+		exitOnErr(initBeads(projectDir, beadsMode))
 	}
 	if !*skipAgentDocs {
 		exitOnErr(runCommand(projectDir, "npx", "agent-docs", "install-gates", "--quality"))
@@ -474,6 +493,103 @@ func writeMinimalPackageJSON(projectDir string) error {
 	return os.WriteFile(filepath.Join(projectDir, "package.json"), content, 0o644)
 }
 
+func installBeads(projectDir string) (beadsInstallMode, error) {
+	if _, err := findBeadsBinary(); err == nil {
+		return beadsSystem, nil
+	}
+
+	if goCmd, err := findGoCommand(); err == nil {
+		if err := runCommand(projectDir, goCmd, "install", "github.com/steveyegge/beads/cmd/bd@latest"); err == nil {
+			return beadsSystem, nil
+		}
+	}
+
+	if runtime.GOOS == "windows" {
+		powerShellCmd, err := findPowerShellCommand()
+		if err != nil {
+			return beadsDisabled, fmt.Errorf("failed to find PowerShell for Beads installation")
+		}
+		err = runCommand(
+			projectDir,
+			powerShellCmd,
+			"-NoProfile",
+			"-ExecutionPolicy",
+			"Bypass",
+			"-Command",
+			"irm https://raw.githubusercontent.com/steveyegge/beads/main/install.ps1 | iex",
+		)
+		if err == nil {
+			return beadsSystem, nil
+		}
+		return beadsDisabled, fmt.Errorf("failed to install Beads via npm, go, or PowerShell installer")
+	}
+
+	err := runCommand(projectDir, "bash", "-lc", "curl -fsSL https://raw.githubusercontent.com/steveyegge/beads/main/scripts/install.sh | bash")
+	if err == nil {
+		return beadsSystem, nil
+	}
+	return beadsDisabled, fmt.Errorf("failed to install Beads via npm, go, or shell installer")
+}
+
+func initBeads(projectDir string, mode beadsInstallMode) error {
+	bdPath, err := findBeadsBinary()
+	if err != nil {
+		return err
+	}
+	return runCommand(projectDir, bdPath, "init")
+}
+
+func findBeadsBinary() (string, error) {
+	if path, err := exec.LookPath("bd"); err == nil {
+		return path, nil
+	}
+	if runtime.GOOS == "windows" {
+		if local := os.Getenv("LOCALAPPDATA"); local != "" {
+			candidate := filepath.Join(local, "Programs", "bd", "bd.exe")
+			if _, err := os.Stat(candidate); err == nil {
+				return candidate, nil
+			}
+		}
+	}
+	if home, err := os.UserHomeDir(); err == nil {
+		candidate := filepath.Join(home, "go", "bin", binaryName("bd"))
+		if _, err := os.Stat(candidate); err == nil {
+			return candidate, nil
+		}
+	}
+	return "", errors.New("bd binary not found after Beads installation")
+}
+
+func binaryName(base string) string {
+	if runtime.GOOS == "windows" {
+		return base + ".exe"
+	}
+	return base
+}
+
+func findGoCommand() (string, error) {
+	if path, err := exec.LookPath("go"); err == nil {
+		return path, nil
+	}
+	if runtime.GOOS == "windows" {
+		candidate := filepath.Join(os.Getenv("ProgramFiles"), "Go", "bin", "go.exe")
+		if _, err := os.Stat(candidate); err == nil {
+			return candidate, nil
+		}
+	}
+	return "", errors.New("go not found")
+}
+
+func findPowerShellCommand() (string, error) {
+	if path, err := exec.LookPath("pwsh"); err == nil {
+		return path, nil
+	}
+	if path, err := exec.LookPath("powershell"); err == nil {
+		return path, nil
+	}
+	return "", errors.New("PowerShell not found")
+}
+
 func findRepoRoot() (string, error) {
 	candidates := []string{}
 	if cwd, err := os.Getwd(); err == nil {
@@ -565,7 +681,7 @@ func printUsage(loadouts loadoutConfig, deps dependencyConfig) {
 	fmt.Println("Commands:")
 	fmt.Println("  list [--agents] [--packs]")
 	fmt.Println("  install [--all] [--interactive] [--packs-only] [--agents-only] [--agents=a,b] [--packs=x,y]")
-	fmt.Println("  setup-project [--dir path] [--install-only] [--skip-noslop] [--skip-agent-docs]")
+	fmt.Println("  setup-project [--dir path] [--install-only] [--skip-noslop] [--skip-agent-docs] [--skip-beads]")
 	fmt.Println("  check [--all] [--interactive] [--agents=a,b]")
 	fmt.Println("  render [--all] [--interactive] [--agents=a,b]")
 	fmt.Println("  uninstall [--all] [--interactive] [--agents=a,b]")
