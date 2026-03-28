@@ -66,6 +66,16 @@ cd workflow-agents
 .\install.ps1
 ```
 
+Selective install is supported:
+
+```bash
+bash install.sh requirements-analyst system-modeler security-reviewer
+```
+
+```powershell
+.\install.ps1 requirements-analyst system-modeler security-reviewer
+```
+
 The installer is dependency-aware:
 
 - it clones or updates the required skill-pack repos into `~/.workflow-agents/packs/`
@@ -104,6 +114,15 @@ Details: [docs/repo-placement.md](docs/repo-placement.md)
 ## Loadout map
 
 See [docs/agent-loadouts.md](docs/agent-loadouts.md).
+
+## Codex Plugin Layer
+
+This repo also includes a small Codex plugin scaffold under `plugins/workflow-agent-helpers/`.
+It is not a replacement for the agent files. It packages a few reusable workflow helper skills that fit the agent layer:
+
+- `agent-selection`
+- `agent-handoff-planning`
+- `beads-task-shaping`
 
 ## License
 
