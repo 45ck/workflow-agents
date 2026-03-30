@@ -65,6 +65,8 @@ func main() {
 		runInstall(root, deps, loadouts, os.Args[2:])
 	case "setup-project":
 		runSetupProject(os.Args[2:])
+	case "update":
+		runUpdate(root)
 	case "check":
 		runCheck(root, loadouts, os.Args[2:])
 	case "render":
@@ -155,6 +157,7 @@ func runSetupProject(args []string) {
 	skipNoslop := fs.Bool("skip-noslop", false, "Do not install @45ck/noslop.")
 	skipAgentDocs := fs.Bool("skip-agent-docs", false, "Do not install 45ck/agent-docs.")
 	skipBeads := fs.Bool("skip-beads", false, "Do not install or initialize Beads.")
+	skipClaudeSettings := fs.Bool("skip-claude-settings", false, "Do not write .claude/settings.json.")
 	installOnly := fs.Bool("install-only", false, "Install packages only; skip initialization commands.")
 	fs.Parse(args)
 
@@ -187,6 +190,10 @@ func runSetupProject(args []string) {
 		beadsMode = mode
 	}
 
+	if !*skipClaudeSettings {
+		exitOnErr(allowAgentTeams(projectDir))
+	}
+
 	if *installOnly {
 		fmt.Printf("Installed project tooling in %s\n", projectDir)
 		return
@@ -206,6 +213,46 @@ func runSetupProject(args []string) {
 	}
 
 	fmt.Printf("Project setup complete in %s\n", projectDir)
+}
+
+// allowAgentTeams writes or updates .claude/settings.json to permit the Agent
+// tool without per-use prompts, enabling agent team workflows by default.
+func allowAgentTeams(projectDir string) error {
+	claudeDir := filepath.Join(projectDir, ".claude")
+	if err := os.MkdirAll(claudeDir, 0o755); err != nil {
+		return err
+	}
+	settingsPath := filepath.Join(claudeDir, "settings.json")
+
+	existing := map[string]any{}
+	if data, err := os.ReadFile(settingsPath); err == nil {
+		_ = json.Unmarshal(data, &existing)
+	}
+
+	perms, _ := existing["permissions"].(map[string]any)
+	if perms == nil {
+		perms = map[string]any{}
+	}
+	allow, _ := perms["allow"].([]any)
+	hasAgent := false
+	for _, v := range allow {
+		if s, ok := v.(string); ok && s == "Agent" {
+			hasAgent = true
+			break
+		}
+	}
+	if !hasAgent {
+		allow = append(allow, "Agent")
+	}
+	perms["allow"] = allow
+	existing["permissions"] = perms
+
+	data, err := json.MarshalIndent(existing, "", "  ")
+	if err != nil {
+		return err
+	}
+	data = append(data, '\n')
+	return os.WriteFile(settingsPath, data, 0o644)
 }
 
 func runCheck(root string, loadouts loadoutConfig, args []string) {
@@ -236,6 +283,12 @@ func runRender(root string, loadouts loadoutConfig, args []string) {
 	}
 	agents := resolveAgents(sel, loadouts)
 	exitOnErr(runPython(root, "scripts/render_codex_agents.py", agentArgs(agents)...))
+}
+
+func runUpdate(root string) {
+	exitOnErr(runCommand(root, "git", "pull", "--ff-only"))
+	fmt.Println("skill-harness updated. Rebuild the binary to apply changes:")
+	fmt.Println("  go build ./cmd/skill-harness/")
 }
 
 func runUninstall(root string, loadouts loadoutConfig, args []string) {
@@ -681,7 +734,8 @@ func printUsage(loadouts loadoutConfig, deps dependencyConfig) {
 	fmt.Println("Commands:")
 	fmt.Println("  list [--agents] [--packs]")
 	fmt.Println("  install [--all] [--interactive] [--packs-only] [--agents-only] [--agents=a,b] [--packs=x,y]")
-	fmt.Println("  setup-project [--dir path] [--install-only] [--skip-noslop] [--skip-agent-docs] [--skip-beads]")
+	fmt.Println("  setup-project [--dir path] [--install-only] [--skip-noslop] [--skip-agent-docs] [--skip-beads] [--skip-claude-settings]")
+	fmt.Println("  update")
 	fmt.Println("  check [--all] [--interactive] [--agents=a,b]")
 	fmt.Println("  render [--all] [--interactive] [--agents=a,b]")
 	fmt.Println("  uninstall [--all] [--interactive] [--agents=a,b]")
