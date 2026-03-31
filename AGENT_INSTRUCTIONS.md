@@ -8,6 +8,7 @@ Use this file when another agent needs to install or use `skill-harness` correct
 
 - the installer for the shared 45ck skill-pack and agent suite
 - the setup repo for project-level tooling based on `@45ck/noslop`, `45ck/agent-docs`, and optional Beads integration
+- the home for embedded suite-local packs under `packs/`
 
 ## Shared suite install
 
@@ -43,7 +44,9 @@ Run this when the goal is to bootstrap a target repo with the 45ck project tooli
 
 Default behavior:
 
-- create `package.json` if missing
+- auto-detect monorepo roots from workspace markers and default to the monorepo root when the target path is inside one
+- auto-detect `npm`, `pnpm`, `yarn`, or `bun` from lockfiles or `packageManager`
+- create `package.json` in the resolved setup directory if missing
 - install `@45ck/noslop`
 - install `45ck/agent-docs`
 - install the Beads CLI by default if it is not already available
@@ -56,10 +59,45 @@ Useful variants:
 
 ```bash
 ./skill-harness setup-project --dir path/to/project --install-only
+./skill-harness setup-project --dir path/to/project --scope workspace
+./skill-harness setup-project --dir path/to/project --scope root
+./skill-harness setup-project --dir path/to/project --package-manager pnpm
 ./skill-harness setup-project --dir path/to/project --skip-agent-docs
 ./skill-harness setup-project --dir path/to/project --skip-noslop
 ./skill-harness setup-project --dir path/to/project --skip-beads
 ```
+
+## Full Toolkit Setup
+
+When bootstrapping a new project manually (without the `setup-project` command), install the complete toolkit in this order:
+
+### 1. Install specgraph (agent-docs)
+
+```bash
+npm install --save-dev @45ck/agent-docs
+npx specgraph init
+```
+
+### 2. Install noslop
+
+```bash
+npm install -g @45ck/noslop
+noslop init
+```
+
+### 3. Install skill packs
+
+```bash
+./skill-harness install --packs specgraph-skills,noslop-skills --packs-only
+```
+
+### What you get
+
+- **specgraph**: spec verification engine, evidence tracking, gap analysis
+- **noslop**: quality gates (pre-commit + pre-PR), content-aware config protection
+- **Skills**: 5 specgraph workflow skills + 3 noslop quality gate skills
+
+For the fully automated equivalent of the above, use the `setup-project` command described in the previous section — it installs both tools, runs their init commands, and sets up git hooks in one step.
 
 ## Rules
 
@@ -79,7 +117,7 @@ After shared-suite installation:
 
 After project setup:
 
-- confirm `package.json` exists in the target repo
+- confirm `package.json` exists in the resolved setup directory
 - confirm `@45ck/noslop` and `agent-docs` were installed
 - confirm the initialization commands completed without error
 

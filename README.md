@@ -6,18 +6,19 @@
 
 `skill-harness` is the setup repo for the 45ck agent workflow stack.
 
-It does four jobs:
+It does five jobs:
 
 - installs the shared skill-pack suite
 - installs the shared Claude and Codex agents
 - bootstraps project-level tooling with `@45ck/noslop` and `45ck/agent-docs`
 - optionally bootstraps Beads, enabled by default in project setup
+- hosts embedded packs for suite-local or incubating capabilities
 
 ## What it can set up
 
 ### Shared suite
 
-- 26 dependent pack repos
+- remote dependency packs plus embedded local packs under `packs/`
 - shared skills synced into `~/.claude/skills/` and `~/.agents/skills/`
 - shared Claude agents
 - shared Codex agents
@@ -36,7 +37,10 @@ Use the project setup command when you want a repo scaffolded with the 45ck tool
 
 That command:
 
-- creates a `package.json` if the target repo does not have one yet
+- auto-detects monorepo roots from workspace markers such as `pnpm-workspace.yaml`, `package.json` workspaces, `nx.json`, `turbo.json`, `lerna.json`, and `rush.json`
+- auto-detects `npm`, `pnpm`, `yarn`, or `bun` from lockfiles or `packageManager`
+- defaults to monorepo-root setup when the target directory is inside a detected monorepo
+- creates a `package.json` in the resolved setup directory if one does not exist yet
 - installs `@45ck/noslop` and `45ck/agent-docs`
 - installs the Beads CLI if it is not already present
 - runs `agent-docs init`
@@ -120,6 +124,24 @@ Install only the packages and skip initialization:
 ./skill-harness setup-project --dir ../my-project --install-only
 ```
 
+Monorepo auto mode:
+
+```bash
+./skill-harness setup-project --dir ../my-monorepo/apps/web
+```
+
+Force workspace-local setup instead of lifting to the monorepo root:
+
+```bash
+./skill-harness setup-project --dir ../my-monorepo/apps/web --scope workspace
+```
+
+Override package manager if auto-detection is not what you want:
+
+```bash
+./skill-harness setup-project --dir ../my-monorepo --package-manager pnpm
+```
+
 Skip one tool:
 
 ```bash
@@ -155,10 +177,11 @@ Skip one tool:
 - `delivery-manager`
 - `delivery-manager-beads`
 - `research-writer`
+- `workflow-engineer`
 
 Agent-to-skill mapping lives in [docs/agent-loadouts.md](docs/agent-loadouts.md).
 
-## Included pack repos
+## Included packs
 
 - [`45ck/agile-delivery-skills`](https://github.com/45ck/agile-delivery-skills)
 - [`45ck/authentication-cryptography-skills`](https://github.com/45ck/authentication-cryptography-skills)
@@ -186,6 +209,9 @@ Agent-to-skill mapping lives in [docs/agent-loadouts.md](docs/agent-loadouts.md)
 - [`45ck/uml-analysis-modelling-skills`](https://github.com/45ck/uml-analysis-modelling-skills)
 - [`45ck/verification-test-design-skills`](https://github.com/45ck/verification-test-design-skills)
 - [`45ck/web-engineering-skills`](https://github.com/45ck/web-engineering-skills)
+- `coding-workflow-skills` (embedded)
+- `design-tooling-skills` (embedded)
+- `integration-tooling-skills` (embedded)
 
 ## Tooling repos used here
 
@@ -193,6 +219,10 @@ Agent-to-skill mapping lives in [docs/agent-loadouts.md](docs/agent-loadouts.md)
 - [`45ck/noslop`](https://github.com/45ck/noslop)
 - [`45ck/agent-docs`](https://github.com/45ck/agent-docs)
 - [`steveyegge/beads`](https://github.com/steveyegge/beads)
+
+## Full toolkit
+
+The standard full toolkit for a new project is **specgraph + noslop**. The `setup-project` command installs both automatically. For manual installation steps or to install the matching skill packs (`specgraph-skills`, `noslop-skills`), see [AGENT_INSTRUCTIONS.md](AGENT_INSTRUCTIONS.md).
 
 ## For other agents
 
@@ -203,6 +233,7 @@ If another agent needs to install this repo or use it as the setup entrypoint, p
 - [cmd/skill-harness/main.go](cmd/skill-harness/main.go)
 - [AGENT_INSTRUCTIONS.md](AGENT_INSTRUCTIONS.md)
 - [docs/third-party-skill-intake.md](docs/third-party-skill-intake.md)
+- [packs/README.md](packs/README.md)
 - [scripts/dependencies.json](scripts/dependencies.json)
 - [scripts/external_skill_intake.py](scripts/external_skill_intake.py)
 - [scripts/build_release.py](scripts/build_release.py)
