@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-03-31T22:01:18.559Z",
+  "sourceRoot": "D:\\Visual Studio Projects\\skill-harness\\experiments\\sessions\\b-iso-01-specgraph",
+  "issues": [
+    {
+      "code": "MARKDOWN_SOURCE_DENIED",
+      "severity": "error",
+      "message": "Unapproved Markdown source file: docs/AUTH-001.md",
+      "path": "docs/AUTH-001.md"
+    },
+    {
+      "code": "MARKDOWN_SOURCE_DENIED",
+      "severity": "error",
+      "message": "Unapproved Markdown source file: README.md",
+      "path": "README.md"
+    },
+    {
+      "code": "MARKDOWN_SOURCE_DENIED",
+      "severity": "error",
+      "message": "Unapproved Markdown source file: SESSION_TASK.md",
+      "path": "SESSION_TASK.md"
+    },
+    {
+      "code": "GENERATE_MISSING_MANIFEST",
+      "severity": "error",
+      "message": "Generated manifest is missing: .specgraph/manifest.json. Run \"agent-docs generate\".",
+      "path": ".specgraph/manifest.json"
+    }
+  ],
+  "totals": {
+    "errors": 4,
+    "warnings": 0,
+    "info": 0,
+    "filesChecked": 5,
+    "docsChecked": 3,
+    "documentsChecked": 2
+  }
+}

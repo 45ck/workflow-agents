@@ -1,0 +1,15 @@
+{
+  "name": "c-iso-01-noslop",
+  "version": "1.0.0",
+  "description": "User authentication module — Group C noslop-only isolation session",
+  "type": "module",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "test": "node --test test/auth.test.js"
+  },
+  "dependencies": {
+    "@45ck/noslop": "file:../../../../noslop"
+  }
+}

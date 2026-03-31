@@ -1,0 +1,23 @@
+id: AUTH-001
+kind: SRD
+title: AUTH-001: User Authentication Module
+status: draft
+scope: auth
+owner: b-iso-01-specgraph
+date: 2026-04-01
+tags[3]: auth,security,session
+implements[0]:
+dependsOn[0]:
+references[0]:
+supersedes[0]:
+supersededBy[0]:
+conflictsWith[0]:
+specRefs[0]:
+sections[7]{title,body}:
+  Overview,"User authentication module for Node.js. SHA-256+salt hashing via node:crypto. In-memory session store with 30-minute sliding inactivity expiry. No external packages."
+  AUTH-001-R01 Login,"login(username,password) validates credentials against in-memory user store, hashes password with per-user salt via SHA-256, and returns a random session token on success. Throws 'Invalid credentials' on failure without revealing whether username or password was wrong."
+  AUTH-001-R02 Logout,"logout(token) removes the session from the active store. No-op when token is unknown or already expired."
+  AUTH-001-R03 isValidSession,"isValidSession(token) returns true if token exists and lastActivity is within 30 minutes of now. Returns false otherwise. Refreshes lastActivity on true (sliding window). Removes expired sessions as side-effect."
+  AUTH-001-R04 Password Hashing,"Passwords stored as SHA-256(password+salt) where salt is a random 16-byte hex string per user. No plaintext passwords stored. node:crypto.timingSafeEqual used for constant-time comparison."
+  AUTH-001-R05 Session Expiry,"SESSION_TTL_MS = 1800000ms (30 minutes). Session expired when now - lastActivity >= SESSION_TTL_MS. Expired sessions removed on validity check."
+  AUTH-001-R06 Tests,"Tests cover: successful login returns token, wrong password throws, unknown user throws, isValidSession true after login, false after logout, false for backdated session. No plaintext passwords in source or tests."

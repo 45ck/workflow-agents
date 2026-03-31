@@ -1,0 +1,16 @@
+{
+  "name": "auth-module",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "User authentication module — login, logout, session management. SHA-256+salt, 30-min expiry.",
+  "main": "auth.js",
+  "scripts": {
+    "test": "node --test auth.test.js",
+    "docs:check": "agent-docs check",
+    "docs:generate": "agent-docs generate --format both",
+    "docs:report": "agent-docs report --all"
+  },
+  "dependencies": {
+    "@45ck/agent-docs": "file:../../../../agent-docs"
+  }
+}

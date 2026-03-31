@@ -1,0 +1,13 @@
+{
+  "name": "d-iso-01-baseline-auth",
+  "version": "1.0.0",
+  "description": "User authentication module — Group D baseline",
+  "type": "module",
+  "main": "auth.js",
+  "scripts": {
+    "test": "node --test auth.test.js"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

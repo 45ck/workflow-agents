@@ -1,0 +1,12 @@
+{
+  "name": "a-iso-01-full",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "node --test auth.test.js"
+  },
+  "dependencies": {
+    "@45ck/agent-docs": "file:../../../../agent-docs",
+    "@45ck/noslop": "file:../../../../noslop"
+  }
+}
