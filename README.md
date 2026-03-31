@@ -48,6 +48,19 @@ That command:
 - runs `bd init`
 - runs `agent-docs install-gates --quality`
 
+## Benchmark results
+
+Five controlled experiments measured the toolkit (specgraph + noslop + skills) against raw Claude Code. Full data in [`experiments/RESULTS.md`](experiments/RESULTS.md).
+
+| Experiment | Toolkit | Baseline | Delta |
+|---|:---:|:---:|:---:|
+| Small greenfield (×2 runs) | 31–32 / 35 | 19–20 / 35 | +12 |
+| Large greenfield (3 modules) | 32 / 35 | 19 / 35 | +13 |
+| Maintenance / handoff | 33 / 35 | 19 / 35 | +14 |
+| Ambiguous brief | **35 / 35** | **13 / 35** | **+22** |
+
+The gap is driven by scope enforcement and traceability — not code quality (functional output was equal in every experiment). The largest signal came from the ambiguous brief: the toolkit forced scope decisions before code was written; the baseline built a 4-class framework for a task that needed a 3-function library.
+
 ## Install the CLI
 
 ### Build locally
