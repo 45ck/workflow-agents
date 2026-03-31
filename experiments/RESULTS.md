@@ -4,6 +4,18 @@ Record one section per session pair. A session pair is one Group A run and one G
 
 ---
 
+## Cumulative summary (2 sessions)
+
+| Session | Task | Group A | Group B | Delta |
+|---------|------|:-------:|:-------:|:-----:|
+| 1 | auth-module-01 | 32/35 | 20/35 | +12 |
+| 2 | auth-module-02 | 31/35 | 19/35 | +12 |
+| **Average** | | **31.5** | **19.5** | **+12** |
+
+**Consistent signal.** Two sessions, identical delta. The gap is driven entirely by spec compliance (5 vs 0) and evidence quality (3 vs 0). All other metrics are within 1 point. Functional output quality is equal in both sessions.
+
+---
+
 ## Session: 2026-04-01
 ## Task: User Authentication Module (`experiments/session-task.md`)
 
@@ -58,6 +70,54 @@ _Group B notable behaviors (what the agent did without guidance):_
 **The toolkit enforces a paper trail.** The most concrete difference: after Group A's session, you can answer "which requirement does this function implement and what evidence exists?" After Group B's session, you cannot. For production systems, auditability, or onboarding, Group A's output is substantially more useful.
 
 **Meaningful signal, but single session.** +12 exceeds the threshold but should be replicated across 3–5 sessions before drawing firm conclusions. Variability between runs (same model, different random seeds) may be significant.
+
+---
+
+## Session: 2026-04-01 (run 2)
+## Task: User Authentication Module (`experiments/session-task.md`)
+
+| Metric | Group A (toolkit) | Group B (baseline) |
+|--------|:----------------:|:-----------------:|
+| Spec compliance | 5 / 5 | 0 / 5 |
+| Evidence quality | 3 / 5 | 0 / 5 |
+| Output correctness | 5 / 5 | 5 / 5 |
+| Over-engineering *(inverted)* | 4 / 5 | 4 / 5 |
+| Drift *(inverted)* | 5 / 5 | 5 / 5 |
+| Quality gate adherence | 4 / 5 | 3 / 5 |
+| Documentation quality | 5 / 5 | 2 / 5 |
+| **Total** | **31 / 35** | **19 / 35** |
+
+**Delta: +12 in favour of Group A.** Consistent with session 1.
+
+## Observations
+
+_Group A notable behaviors:_
+
+- Spec written first (`docs/AUTH-001.md`) with two evidence dimensions: `implementation: E0` and `test_coverage: E0`.
+- Spec committed before any code. 5 `@implements` annotations; specgraph registered **9 implementation claims** at E0.
+- Added `activeSessionCount()` utility (not required — minor over-engineering, -1 on metric 4).
+- `npx specgraph verify`: `1 WARN` (advisory — same Beads-unavailable condition as session 1). Waiver recorded.
+- `npm test`: **20/20 pass** across 5 suites.
+- Two-commit workflow: spec-first, then implementation + tests + README + waiver.
+
+_Group B notable behaviors:_
+
+- No spec, no docs, no annotations — direct implementation from task prompt.
+- **22/22 tests pass**, no failures encountered (no bug to catch and fix this run).
+- `createCredential()` factory function — minor abstraction, same score as session 1 on over-engineering.
+- Lazy session sweep on every `login` call (unrequested but reasonable).
+- README present with usage examples. Strong JSDoc.
+- No deliberate final-state verification step observed (-1 vs session 1 on quality gate adherence).
+
+## Reviewer notes
+
+**Results replicate cleanly.** Session 2 delta (+12) matches session 1 (+12) exactly. Group A scores 31–32; Group B scores 19–20. The spread is stable.
+
+**Spec compliance and evidence quality account for the entire gap.** Group A scores 5+3=8 on these two metrics each session; Group B scores 0+0=0. All other metrics are within 1 point of each other across both sessions. The toolkit adds traceability; it adds nothing to functional output.
+
+**Group A over-engineering crept in.** Session 1 Group A scored 5 (nothing unrequested); session 2 scored 4 (`activeSessionCount` added). Small variance — different random seed, same model. Does not indicate a pattern.
+
+**Group B quality gate adherence dropped 4→3.** Session 1 Group B caught and fixed a real boundary condition bug, demonstrating active quality discipline. Session 2 had no failures to fix — the agent just ran tests once, they passed, and it declared completion. Slightly less evidence of deliberate quality checking.
 
 ---
 

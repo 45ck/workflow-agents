@@ -1,0 +1,12 @@
+{
+  "name": "b-auth-module-02",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test auth.test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
