@@ -402,4 +402,36 @@ Skip the overhead when:
 - Writing a truly throwaway script or one-shot prototype
 - Requirements are crystal clear and the project ends after one session
 
+---
+
+## Experiment 8: Multi-Session Compounding (2026-04-01)
+## Task: 3 sequential sessions — auth (S1) → task CRUD (S2) → rate limiting (S3)
+## Groups: A=full toolkit (specgraph + AGENTS.md), B=baseline (no tooling)
+
+**Hypothesis:** Toolkit value compounds across sessions; each fresh agent has lower friction with the toolkit than without it.
+
+### Session chain
+
+| Session | Task added | Group A | Group B |
+|---|---|:---:|:---:|
+| S1 | Auth module (login/logout/isValidSession) | TBD | scored 29 tests |
+| S2 | Task CRUD (createTask/getTasks/updateTask/deleteTask) | TBD | 74 tests total |
+| S3 | Login rate limiting (5 failures → 15-min lockout) | TBD | TBD |
+
+### Notes from completed sessions
+
+**Group B S1:** 29 tests, clean implementation. README documented all design decisions well.
+
+**Group B S2 (fresh agent):** Added `getUsernameFromToken` to auth.js (needed, not present), created `tasks.js` (45 tests), updated `package.json` to run both files. 74 tests total, 0 failures. Agent explicitly reported **zero friction** — existing README and JSDoc were clear enough to proceed without additional scaffolding.
+
+**Group A S1:** 16 tests, specgraph verify PASS with 1 advisory warn. Spec documented "Patterns Established" including session store structure, test helper pattern, annotation conventions, and out-of-scope items for future agents.
+
+*(Group A S2, Group A S3, Group B S3 in progress — to be scored once complete)*
+
+### Final scoring
+
+*(Pending completion of all sessions)*
+
+---
+
 <!-- Copy the session block above for each new session pair -->
