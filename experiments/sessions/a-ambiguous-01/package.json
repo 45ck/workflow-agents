@@ -1,0 +1,24 @@
+{
+  "dependencies": {
+    "@45ck/agent-docs": "file:../../../../agent-docs",
+    "@45ck/noslop": "file:../../../../noslop"
+  },
+  "name": "a-ambiguous-01",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "src/notify.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node --test src/notify.test.js",
+    "docs:check": "agent-docs check",
+    "docs:generate": "agent-docs generate --format both",
+    "docs:report": "agent-docs report --all"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

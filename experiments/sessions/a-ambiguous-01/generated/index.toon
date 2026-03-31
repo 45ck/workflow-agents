@@ -1,0 +1,5 @@
+generatedAt: "2026-03-31T21:38:51.764Z"
+type: agent-doc-index
+items[2]{id,kind,title,path}:
+  NOTIFY-001,SRD,Notification System Library,srd/notify-001.md
+  PLAN-000,OTHER,Project Plan Index,other/plan-000.md

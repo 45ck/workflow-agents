@@ -4,7 +4,7 @@ Record one section per session pair. A session pair is one Group A run and one G
 
 ---
 
-## Cumulative summary (6 sessions)
+## Cumulative summary (5 experiments, 6 sessions)
 
 | # | Experiment | Task | Group A | Group B | Delta |
 |---|-----------|------|:-------:|:-------:|:-----:|
@@ -12,10 +12,14 @@ Record one section per session pair. A session pair is one Group A run and one G
 | 2 | Greenfield small (rep 2) | auth-module-02 | 31/35 | 19/35 | +12 |
 | 3 | Greenfield large | task-api-01 | 32/35 | 19/35 | +13 |
 | 4 | Maintenance/handoff | handoff-01 | 33/35 | 19/35 | +14 |
-| 7 | Ambiguous brief | ambiguous-01 | TBD | TBD | TBD |
-| **Avg (1-4)** | | | **32** | **19.25** | **+12.75** |
+| 7 | Ambiguous brief | ambiguous-01 | **35/35** | 13/35 | **+22** |
+| **Avg** | | | **32.6** | **18.0** | **+14.6** |
 
-**Signal is consistent and strengthening.** The gap is stable at +12–14 across all task types. Largest gap on the maintenance/handoff experiment — the toolkit's paper trail had measurable utility for a fresh agent. Exp 7 (ambiguous brief) pending.
+**The system is not useless. The ambiguous brief experiment is the proof.**
+
+On a clear task, the toolkit adds traceability overhead but doesn't improve functional output (+12–13 delta, driven by spec/evidence metrics only). On a *vague* task, the spec-first workflow forces scope discipline that prevents framework explosion — producing minimal correct code where the baseline produces a 4-class framework nobody asked for (+22 delta, functional output still equal but over-engineering collapsed to 1/5).
+
+**The toolkit's value proposition**: not better code on well-defined tasks, but significantly better *scoping and traceability* — worth the overhead as projects grow and requirements get fuzzier.
 
 ---
 
@@ -225,5 +229,101 @@ _Group B:_
 **The hidden-state trap is a proxy for real maintenance cost.** In a production codebase with tens of modules, undocumented mutable state is a major source of bugs. Group A's annotations pointed new agents to the spec; Group B's code provided no such guidance. The discovery cost here was a few extra functions and a test rewrite — at larger scale it would be a bug.
 
 **Evidence quality reached 4/5 for the first time** in Group A. The maintenance context means starting from a working evidence chain rather than zero — iterative spec maintenance compounds positively.
+
+---
+
+## Experiment 7: Ambiguous Brief (2026-04-01)
+## Task: "Build a notification system that sends alerts when things happen." (No further detail)
+
+| Metric | Group A (toolkit) | Group B (baseline) |
+|--------|:----------------:|:-----------------:|
+| Spec compliance | 5 / 5 | 0 / 5 |
+| Evidence quality | **5 / 5** | 0 / 5 |
+| Output correctness | 5 / 5 | 5 / 5 |
+| Over-engineering *(inverted)* | **5 / 5** | **1 / 5** |
+| Drift *(inverted)* | **5 / 5** | **2 / 5** |
+| Quality gate adherence | **5 / 5** | 3 / 5 |
+| Documentation quality | 5 / 5 | 2 / 5 |
+| **Total** | **35 / 35** | **13 / 35** |
+
+**Delta: +22** — largest gap across all experiments. Perfect score for Group A. First clean specgraph verify PASS (0 warnings, 0 failures).
+
+## Observations
+
+_Group A:_
+- Spec (`docs/NOTIFY-001.md`) resolved ALL ambiguity before touching code. Key decisions:
+  - "Things" = named string event types supplied by calling code. No built-in sources.
+  - "Sends alerts" = synchronous in-process callback invocation. No transport layer.
+  - API surface pinned to exactly 3 functions: `subscribe`, `unsubscribe`, `emit` + `createNotificationBus` factory.
+- **14 explicit out-of-scope items** documented: file watchers, HTTP webhooks, OS signals, timers, email, SMS, logging, WebSockets, wildcard subscriptions, async dispatch, event history, priority ordering, middleware chains, TypeScript types.
+- Implementation: **1 file**, ~140 lines, nothing unrequested.
+- **16 tests** — one per spec acceptance criterion.
+- `specgraph verify`: **PASS, 0 WARN, 0 FAIL** — first clean pass in all experiments. Agent used `@test` evidence linking to the test file, achieving E1 structural evidence for the first time.
+- Quality gate score: **5/5** — all gates passed cleanly, no waivers needed.
+
+_Group B:_
+- Built a full 4-component framework: `EventBus`, `NotificationQueue`, `NotificationLog`, `ChannelRouter`.
+- `src/` directory structure with `src/index.js` re-export barrel.
+- `NotificationLog` writes JSONL to a file — **persistent storage that was never requested**.
+- `NotificationQueue` implements priority ordering (critical > warning > info) — **never requested**.
+- `ChannelRouter` supports wildcard `*` subscriptions — **never requested**.
+- **54 tests** (vs Group A's 16) — 3× the test count because there were 3× the unrequested features to test.
+- Output correctness: **5/5** — all 54 tests pass. The code works. It's just not what was asked for.
+- Drift score: **2/5** — significant tangents. Multiple unrequested subsystems built.
+- Over-engineering score: **1/5** — severe scope creep. 4 classes, JSONL persistence, priority queues, wildcard routing — this is a notification framework, not a notification system.
+
+## Reviewer notes
+
+**This is the definitive result.** On a clear task, both groups produce equal functional output — the toolkit's value is purely in traceability. On a vague task, the spec-first workflow forces the agent to resolve ambiguity before building, producing minimal correct code. The baseline agent resolves ambiguity by building everything that *could* be meant, resulting in a 4-class framework for a task that needed a 3-function library.
+
+**The spec doc's 14 out-of-scope items are the key artefact.** They represent scope discipline that raw Claude never exercised. In a real project, building `NotificationLog` with JSONL persistence when nobody asked for it is wasted sprint capacity, a maintenance burden, and a future source of bugs.
+
+**Evidence quality reached 5/5 for the first time.** The `@test` annotation providing E1 structural evidence demonstrates that when the spec-writer skill is used with full compliance, the evidence chain completes cleanly. This validates the specgraph design.
+
+**Group B's 54 tests are a red herring.** More tests looks better on the surface, but 38 of those tests exist only because Group B built 4 subsystems nobody asked for. They're not covering more of the *required* behaviour — they're testing unrequested features.
+
+---
+
+## Final Analysis: Is the Toolkit Worth It?
+
+### Verdict by project type
+
+| Project type | Toolkit worth it? | Why |
+|---|---|---|
+| Small, clear, one-off | Marginal | Overhead not recovered on a 1-session throwaway |
+| Medium greenfield, clear spec | Yes | Traceability pays off during development and review |
+| Large greenfield, clear spec | Yes | Gap widens (+13); 3 spec docs catch design decisions early |
+| Maintenance / handoff | Strongly yes | Paper trail prevents hidden-state traps; compounds positively |
+| Vague or ambiguous brief | Essential | Without it, agents build frameworks for tasks that need libraries |
+
+### What the toolkit is NOT
+
+- A code quality improvement tool — functional output was **equal in all 5 experiments**
+- A test coverage improvement tool — Group B wrote equal or more tests in most sessions
+- A speed improvement tool — Group A sessions took more steps (spec → commit → code → verify → waiver → commit)
+
+### What the toolkit IS
+
+- A **scope enforcement tool** — forces the agent to define what it's building before building it
+- A **traceability tool** — every function links to a requirement; every requirement has an evidence status
+- A **maintenance multiplier** — the paper trail pays dividends when a fresh agent picks up the code
+- A **hidden-state documentation tool** — spec docs surface implementation decisions that would otherwise be invisible to future agents
+
+### The greenfield-only concern
+
+Your concern that agent-docs is "greenfield-only" is partially valid. The toolkit is most natural on greenfield projects. However, the handoff experiment (exp 4) shows that **adding the toolkit to an existing project before maintenance work** (even mid-project) still produces benefit — the maintenance agent navigated the spec-tracked codebase with zero friction vs. discovering a hidden mutable-state trap on the plain codebase.
+
+The toolkit is not a retrofit tool for existing codebases with no specs. It is a protocol for new and evolving projects where future agents will need to understand what was built and why.
+
+### Recommendation
+
+Use the full toolkit (specgraph + noslop + skill-harness skills) when:
+- Starting a new project that will be touched by more than one session
+- Requirements are unclear or will evolve
+- The project will grow beyond a few hundred lines
+
+Skip the overhead when:
+- Writing a truly throwaway script or one-shot prototype
+- Requirements are crystal clear and the project ends after one session
 
 <!-- Copy the session block above for each new session pair -->

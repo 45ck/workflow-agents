@@ -1,0 +1,44 @@
+{
+  "generatedAt": "2026-03-31T21:38:47.139Z",
+  "sourceRoot": "D:\\Visual Studio Projects\\skill-harness\\experiments\\sessions\\a-ambiguous-01",
+  "issues": [
+    {
+      "code": "MARKDOWN_SOURCE_DENIED",
+      "severity": "error",
+      "message": "Unapproved Markdown source file: AGENTS.md",
+      "path": "AGENTS.md"
+    },
+    {
+      "code": "MARKDOWN_SOURCE_DENIED",
+      "severity": "error",
+      "message": "Unapproved Markdown source file: docs/NOTIFY-001.md",
+      "path": "docs/NOTIFY-001.md"
+    },
+    {
+      "code": "MARKDOWN_SOURCE_DENIED",
+      "severity": "error",
+      "message": "Unapproved Markdown source file: SESSION_TASK.md",
+      "path": "SESSION_TASK.md"
+    },
+    {
+      "code": "MARKDOWN_SOURCE_DENIED",
+      "severity": "error",
+      "message": "Unapproved Markdown source file: SETUP.md",
+      "path": "SETUP.md"
+    },
+    {
+      "code": "GENERATE_MISSING_MANIFEST",
+      "severity": "error",
+      "message": "Generated manifest is missing: .specgraph/manifest.json. Run \"agent-docs generate\".",
+      "path": ".specgraph/manifest.json"
+    }
+  ],
+  "totals": {
+    "errors": 5,
+    "warnings": 0,
+    "info": 0,
+    "filesChecked": 6,
+    "docsChecked": 4,
+    "documentsChecked": 2
+  }
+}

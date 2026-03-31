@@ -1,0 +1,23 @@
+{
+  "version": "1.0",
+  "generatedAt": "2026-03-31T21:38:51.766Z",
+  "format": "markdown",
+  "entries": [
+    {
+      "source": "docs/NOTIFY-001.toon",
+      "id": "NOTIFY-001",
+      "kind": "SRD",
+      "sourceHash": "b8b536db2fee5e8aff7cc6dba72f02396e63af1e40f6e45eaeb09478e88197ed",
+      "generatedPath": "generated/srd/notify-001.md",
+      "generatedAt": "2026-03-31T21:38:51.761Z"
+    },
+    {
+      "source": "docs/PLAN.toon",
+      "id": "PLAN-000",
+      "kind": "OTHER",
+      "sourceHash": "db5ada489a3c51a2d42984b473049aaad07f2fa32c1d0c3105a6ceb5e3b1da0c",
+      "generatedPath": "generated/other/plan-000.md",
+      "generatedAt": "2026-03-31T21:38:51.763Z"
+    }
+  ]
+}

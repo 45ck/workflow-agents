@@ -1,0 +1,13 @@
+{
+  "name": "notification-system",
+  "version": "1.0.0",
+  "description": "A local in-process notification system for Node.js",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node --test test/notification.test.js"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

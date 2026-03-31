@@ -1,0 +1,24 @@
+id: NOTIFY-001
+kind: SRD
+title: Notification System Library
+status: accepted
+scope: library
+owner: Group A
+date: 2026-04-01
+tags[3]: notification,events,library
+implements[0]:
+dependsOn[0]:
+references[0]:
+supersedes[0]:
+supersededBy[0]:
+conflictsWith[0]:
+specRefs[0]:
+sections[7]{title,body}:
+  REQ-NOTIFY-001-01 Subscribe,"The library MUST expose a subscribe(eventType, handler) function that registers a handler for a named event type and returns a unique subscription ID (a Symbol). Throws TypeError if eventType is not a non-empty string. Throws TypeError if handler is not a function."
+  REQ-NOTIFY-001-02 Unsubscribe,"The library MUST expose an unsubscribe(subscriptionId) function that removes a previously registered handler. Returns true if found and removed, false if not found. Does not throw for unknown IDs."
+  REQ-NOTIFY-001-03 Emit,"The library MUST expose an emit(eventType, payload) function that invokes all handlers registered for eventType with (eventType, payload) and returns the count of handlers invoked. Throws TypeError if eventType is not a non-empty string. Handler errors propagate to caller."
+  REQ-NOTIFY-001-04 Factory,"The library MUST export a createNotificationBus() factory function that returns an isolated bus instance. Two buses created by createNotificationBus() do not share subscriptions."
+  REQ-NOTIFY-001-05 ESM Module,"The library MUST be an ESM module (type: module in package.json) exporting createNotificationBus as a named export from src/notify.js."
+  Scope Decisions,"Things = named string event types supplied by caller. Sends alerts = synchronous in-process handler invocation. Excluded: email, HTTP, file-watch, timers, process signals, databases, message queues, WebSocket."
+  Out of Scope,"Wildcard subscriptions, once-only subscriptions, async dispatch, event history/replay, priority ordering, middleware chains, TypeScript types, singleton bus export."
+
